@@ -167,7 +167,28 @@ function calculateLengthL1(v: Vector3D) {
 }
 
 // 루프보다는 모든 속성을 각각 더하는 구현이 더 낫다.
-
 function calculatedLengthL2(v: Vector3D) {
   return Math.abs(v.x) + Math.abs(v.y) + Math.abs(v.z);
 }
+
+// Item 5️⃣. any 타입 지양하기 (5/6)
+// 타입 시스템은 점진적이고 선택적이다.
+
+// any 타입에는 안정성이 없다.
+// any는 함수 시그니처를 무시해 버린다.
+
+// any 타입에는 언어 서비스가 적용되지 않는다.
+// 타입스크립트의 모토: 확장 가능한 자바스크립트
+// 확장: 타입스크립트 경험의 핵심 요소인 '언어 서비스'
+interface Person {
+  firstName: string;
+  last: string;
+}
+
+const formatName = (p: Person) => `${p.firstName} ${p.last}`;
+const formatNameAny = (p: any) => `${p.first} ${p.last}`;
+
+// any 타입은 코드 리팩토링 때 버그를 감춘다. -> 타입 체커를 통과해도 런타임에 오류가 발생함.
+// any는 타입 설계를 감춘다.
+// any는 타입시스템의 신뢰도를 떨어뜨린다.
+// => any 타입을 사용하면 타입 체커와 타입스크립트 언어 서비스를 무력화시켜 버린다.
