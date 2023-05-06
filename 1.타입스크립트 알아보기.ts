@@ -119,3 +119,55 @@ function asNumber2(val: number | string): number {
 // 타입스크립트 타입으로는 함수를 오버로드할 수 없다.
 
 // 타입스크립트 타입은 런타임 성능에 영향을 주지 않는다.
+
+// Item 4️⃣. 구조적 타이핑에 익숙해지기 (5/4)
+
+// 덕 타이핑 duck typing : 객체가 어떤 타입에 부합하는 변수와 메서드를 가질 경우 객체를 해당 타입에 속하는 것으로 간주하는 방식.
+
+interface Vetor2D {
+  x: number;
+  y: number;
+}
+
+function calculateLength(v: Vetor2D) {
+  return Math.sqrt(v.x * v.x + v.y * v.y);
+}
+
+interface NamedVector {
+  name: string;
+  x: number;
+  y: number;
+}
+
+const v: NamedVector = { x: 3, y: 4, name: 'Zee' };
+
+calculateLength(v); // 정상 number type의 x와 y가 있기 때문에 호출이 가능하다.
+
+// 함수를 작성할 때, 호출에 사용되는 매개변수의 속성들이 매개변수의 타입에 선언된 속성만을 가질 거라 생각하기 쉽다.
+// 타입은 열려'open'있다.
+
+interface Vector3D {
+  x: number;
+  y: number;
+  z: number;
+}
+
+// v 는 어떤 속성이든 가질 수 있다.
+// 정확한 타입으로 객체를 순회하는 것은 까다로운 문제이다.
+function calculateLengthL1(v: Vector3D) {
+  let length = 0;
+
+  for (const axis of Object.keys(v)) {
+    const coord = v[axis];
+
+    length += Math.abs(coord);
+  }
+
+  return length;
+}
+
+// 루프보다는 모든 속성을 각각 더하는 구현이 더 낫다.
+
+function calculatedLengthL2(v: Vector3D) {
+  return Math.abs(v.x) + Math.abs(v.y) + Math.abs(v.z);
+}
