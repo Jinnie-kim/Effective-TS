@@ -108,3 +108,31 @@
 
   function email1({ person, subject, body }: { person: Person2; subject: string; body: string }) {}
 }
+{
+  // Item 9️⃣. 타입 단언보다는 타입 선언을 사용하기
+  // 모든 타입은 unknown의 서브타입이기 때문에 unknown이 포함된 단언문은 항상 동작한다.
+
+  interface Person {
+    name: string;
+  }
+
+  const alice: Person = { name: 'Alice' }; // 타입 선언
+  const bob = { name: 'Bob' } as Person; // 타입 단언
+
+  // 타입 선언: 할당되는 값이 해당 인터페이스를 만족하는 지 검사, 잉여 속성 체크 검사
+  // 타입 단언: 강제로 타입을 지정, 타입 체커가 오류를 무시하도록 함.
+
+  const people = ['alice', 'bob', 'jan'].map((name) => ({ name }));
+
+  const people2 = ['alice', 'bob', 'jan'].map((name) => ({ name } as Person));
+
+  const people3 = ['alice', 'bob', 'jan'].map((name) => {
+    const person: Person = { name };
+    return person;
+  });
+
+  //ㅔ people3 코드를 좀 더 간결하게 표현
+  const people4 = ['alice', 'bob', 'jan'].map((name): Person => ({ name }));
+
+  const people5: Person[] = ['alice', 'bob', 'jan'].map((name): Person => ({ name }));
+}
