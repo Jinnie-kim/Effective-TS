@@ -75,7 +75,7 @@
 
   const list: number[] = []; // [1]도 정상
 
-  // Item 8️⃣. 타입 공간과 값 공간의 심벌 구분하기
+  // Item 8️⃣. 타입 공간과 값 공간의 심벌 구분하기(5/13)
   // 타입스크립트의 심벌symbol은 타입 공간이나 값 공간 중의 한 곳에 존재한다.
   // 타입스크립트 코드에서 타입과 값은 번갈아 나올 수 있다.
   // 모든 값은 타입을 가지지만, 타입은 값을 가지지 않는다.
@@ -109,7 +109,7 @@
   function email1({ person, subject, body }: { person: Person2; subject: string; body: string }) {}
 }
 {
-  // Item 9️⃣. 타입 단언보다는 타입 선언을 사용하기
+  // Item 9️⃣. 타입 단언보다는 타입 선언을 사용하기(5/13)
   // 모든 타입은 unknown의 서브타입이기 때문에 unknown이 포함된 단언문은 항상 동작한다.
 
   interface Person {
@@ -131,13 +131,13 @@
     return person;
   });
 
-  //ㅔ people3 코드를 좀 더 간결하게 표현
+  // people3 코드를 좀 더 간결하게 표현
   const people4 = ['alice', 'bob', 'jan'].map((name): Person => ({ name }));
 
   const people5: Person[] = ['alice', 'bob', 'jan'].map((name): Person => ({ name }));
 }
 {
-  // Item 🔟. 객체 래퍼 타입 피하기
+  // Item 🔟. 객체 래퍼 타입 피하기(5/13)
   // 자바스크립트에는 메서드를 가지는 String 객체 타입이 정의되어 있다.
   // 타입스크립트는 기본형과 객체 래퍼 타입을 별도로 모델링한다.
 }
