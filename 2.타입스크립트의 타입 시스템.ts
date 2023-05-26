@@ -141,3 +141,162 @@
   // 자바스크립트에는 메서드를 가지는 String 객체 타입이 정의되어 있다.
   // 타입스크립트는 기본형과 객체 래퍼 타입을 별도로 모델링한다.
 }
+{
+  // Item 1️⃣1️⃣. 잉여 속성 체크의 한계 인지하기
+  // 잉여 속성 체크 -> 조건에 따라 동작하지 않는 다는 한계가 있다.
+  // 잉여 속성 체크(== 엄격한 객체 리터럴 체크)를 이용하면
+  // 1. 기본적으로 타입 시스템의 구조적 본질을 해치지 않으면서도
+  // 객체 리터럴에 알 수 없는 속성을 허용하지 않는다.
+
+  // 객체 리터럴이 아니고 타입 단언문을 사용하면 잉여 속성 체크가 적용되지 않는다.
+  // 구조적 타이핑 시스템에서 허용되는 속성 이름의 오타 같은 실수를 잡는 데 효과적인 방법이다.
+
+  interface Room {
+    numDoors: number;
+    ceilingHeightFt: number;
+  }
+
+  // '잉여 속성 체크' 과정 수행
+  const r: Room = {
+    numDoors: 1,
+    ceilingHeightFt: 10,
+    elephant: 'present', // 구조적 타이핑 관점으로 생각해 보면 오류가 없어야 한다.
+  };
+
+  const obj = {
+    numDoors: 1,
+    ceilingHeightFt: 10,
+    elephant: 'present',
+  };
+
+  const r1: Room = obj; // 통상적인 할당 가능 검사와 함께 쓰이면 구조적 타이핑이 무엇인지 혼란스러워질 수 있다.
+
+  // Item 1️⃣2️⃣. 함수 표현식에 타입 적용하기
+  // 타입스크립트에서는 함수 표현식을 사용하는 것이 좋다.
+  // 함수의 매개변수부터 반환값까지 전체를 함수 타입으로 선언하여 함수 표현식에 재사용할 수 있다.
+
+  function rollDice1(sides: number): number {} // 문장
+  const rollDice2 = function (sides: number): number {}; // 표현식
+  const rollDice3 = (sides: number): number => {}; // 표현식
+
+  // 함수 타입 선언은 불필요한 코드의 반복을 줄인다.
+  // 반복되는 함수 시그니처를 하나의 함수 타입으로 통합할 수 있다.
+
+  type BinaryFn = (a: number, b: number) => number;
+  const add: BinaryFn = (a, b) => a + b;
+  const sub: BinaryFn = (a, b) => a - b;
+  const mul: BinaryFn = (a, b) => a * b;
+  const div: BinaryFn = (a, b) => a / b;
+
+  // 프로미스 요청 상태 체크 함수
+  async function checkedFetch(input: RequestInfo, init?: RequestInit) {
+    const response = await fetch(input, init);
+
+    if (!response.ok) {
+      // 비동기 함수 내에서는 거절된 프로미스로 변환한다.
+      throw new Error(`Request failed: ${response.status}`);
+    }
+    return response;
+  }
+
+  // 위 코드를 좀 더 간결하게
+  // 함수 표현식 전체 타입을 정의하는 것이 코드도 간결하고 안전하다.
+  const checkedFetch1: typeof fetch = async (input, init) => {
+    const response = await fetch(input, init);
+
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`);
+    }
+    return response;
+  };
+
+  // Item 1️⃣3️⃣. 타입과 인터페이스의 차이점 알기
+  // 단순한 함수 타입에는 타입 alias가 더 나은 선택
+  // 함수 타입에 추가적인 속성이 있다면 타입이나 인터페이스 어떤 것을 선택하든 차이가 없다.
+  // API에 대한 타입 선언을 작성해야 한다면 인터페이스를 사용하는 게 좋다.
+
+  // 타입 alias와 인터페이스는 모두 제네릭이 가능하다.
+
+  type TState = {
+    name: string;
+    capital: string;
+  };
+
+  interface IState {
+    name: string;
+    capital: string;
+  }
+
+  // 유니온 타입 O, 유니온 인터페이스 X
+  // 인터페이스는 선언 병합이 가능하다. (declaration merging)
+
+  interface IState {
+    name: string;
+    capital: string;
+  }
+
+  interface IState {
+    population: number;
+  }
+
+  const wyoming: IState = {
+    name: 'Wyoming',
+    capital: 'Cheyenne',
+    population: 500_000,
+  };
+
+  // Item 1️⃣4️⃣. 타입 연산과 제너릭 사용으로 반복 줄이기
+  interface Person {
+    firstName: string;
+    lastName: string;
+  }
+
+  interface PersonWithBirthDate {
+    firstName: string;
+    lastName: string;
+    birth: Date;
+  }
+  // 위의 경우 수정하여 반복 제거
+  interface PersonWithBirthDate extends Person {
+    birth: Date;
+  }
+
+  // 반복을 줄이는 가장 간단한 방법: 타입에 이름을 붙이는 것.
+
+  // 함수가 같은 타입 시그니처를 공유하는 경우 -> 공유하는 시그니처를 명명된 타입으로 분리 가능
+  function get(url: string, opts: Options): Promise<Response> {}
+  function post(url: string, opts: Options): Promise<Response> {}
+
+  type HTTPFunction = (url: string, opts: Options) => Promise<Response>;
+  const get: HTTPFunction = (url, opts) => {};
+  const post: HTTPFunction = (url, opts) => {};
+
+  // 전체 애플리케이션 상태 표현
+  interface State {
+    userId: string;
+    pageTitle: string;
+    recentFiles: string[];
+    pageContents: string;
+  }
+
+  // 부분만 표현
+  interface TopNavState {
+    userId: string;
+    pageTitle: string;
+    recentFiles: string[];
+  }
+
+  // State를 인덱싱하여 속성의 타입에서 중복을 제거할 수 있다.
+
+  type TopNavState1 = {
+    userId: State['userId'];
+    pageTitle: State['pageTitle'];
+    recentFiles: State['recentFiles'];
+  };
+
+  // 매핑된 타입을 사용하면 중복 수준이 좀 더 나아진다.
+  // 매핑된 타입은 배열의 필드를 루프 도는 것과 같은 방식이다.
+  type TopNavState2 = {
+    [k in 'userId' | 'pageTitle' | 'recentFiles']: State[k];
+  };
+}
