@@ -299,4 +299,18 @@
   type TopNavState2 = {
     [k in 'userId' | 'pageTitle' | 'recentFiles']: State[k];
   };
+
+  // Item 1️⃣5️⃣. 동적 데이터에 인덱스 시그니처 사용하기
+  // 타입스크립트에서는 타입에 '인덱스 시그니처'를 명시하여 유연하게 매핑을 표현할 수 있다.
+
+  // [property: string]: string -> 인덱스 시그니처 (부정확하다.)
+  type Rocket = { [property: string]: string };
+
+  // key 마다 다른 타입을 가질 수 없다.
+  // key는 무엇이든 가능하기 때문에 자동 완성 기능이 동작하지 않는다.
+  const rocket: Rocket = {
+    name: 'Falcon 9',
+    variant: 'v1.0',
+    thrust: '4,940 kN',
+  };
 }
