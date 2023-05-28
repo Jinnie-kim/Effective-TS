@@ -303,14 +303,52 @@
   // Item 1️⃣5️⃣. 동적 데이터에 인덱스 시그니처 사용하기
   // 타입스크립트에서는 타입에 '인덱스 시그니처'를 명시하여 유연하게 매핑을 표현할 수 있다.
 
-  // [property: string]: string -> 인덱스 시그니처 (부정확하다.)
+  // [property: string]: string -> 인덱스 시그니처
   type Rocket = { [property: string]: string };
 
   // key 마다 다른 타입을 가질 수 없다.
   // key는 무엇이든 가능하기 때문에 자동 완성 기능이 동작하지 않는다.
+  // => 인덱스 시그니처는 부정확하다.
   const rocket: Rocket = {
     name: 'Falcon 9',
     variant: 'v1.0',
-    thrust: '4,940 kN',
+    thrust: '4,940 kN', // 이 key는 값 타입이 number여야 할 수도 있다.
   };
+
+  // 위와 같은 경우에는 interface를 사용해야 한다.
+
+  // Item 1️⃣6️⃣. number 인덱스 시그니처보다는 Array, 튜플, ArrayLike를 사용하기
+  // 인덱스 시그니처가 'number'로 표현되어있다면 입력한 값이 number여야 한다는 것을 의미하지만,
+  // 실제 런타임에 사용되는 키는 string 타입이다.
+  // 인댁스 시그니처로 사용된 number 타입은 버그를 잡기 위한 순수 타입스크립트 코드이다.
+
+  // Item 1️⃣7️⃣. 변경 관련된 오류 방지를 위해 readonly 사용하기
+
+  // Item 1️⃣8️⃣. 매핑된 타입을 사용하여 값을 동기화하기
+  // 매핑된 타입을 사용해서 관련된 값과 타입을 동기화하도록 한다.
+
+  interface ScatterProps {
+    // The data
+    xs: number[];
+    ys: number[];
+
+    // Display
+    xRange: [number, number];
+    yRange: [number, number];
+    color: string;
+
+    // Events
+    onClick: (x: number, y: number, index: number) => void;
+  }
+
+  function shouldUpdate(oldProps: ScatterProps, newProps: ScatterProps) {
+    let k: keyof ScatterProps;
+
+    for (k in oldProps) {
+      if (oldProps[k] !== newProps[k]) {
+        if (k !== 'onClick') return true;
+      }
+    }
+    return false;
+  }
 }
