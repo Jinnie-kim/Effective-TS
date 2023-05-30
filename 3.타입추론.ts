@@ -97,4 +97,74 @@
     x: 1,
     y: 2,
   } as const;
+
+  // Item 2️⃣2️⃣. 타입 좁히기
+  // 가장 일반적인 예시는 null 체크
+
+  const el = document.getElementById('foo');
+
+  if (el) {
+    el;
+    el.innerHTML = 'Party time'.blink();
+  } else {
+    el;
+    alert('No element #foo');
+  }
+
+  // 또는
+
+  const el2 = document.getElementById('foo');
+  if (!el) throw new Error('Unable to find #foo');
+  el;
+  el.innerHTML = 'Party time'.blink();
+
+  // instanceof, 속성 체크로도 타입을 좁힐 수 있다.
+  // Array.isArray 같은 일부 내장 함수로도 타입을 좁힐 수 있다.
+
+  // 명시적 '태그'를 붙여서 타입을 좁힐 수도 있다.
+  // tagged union or discriminated union
+  interface UploadEvent {
+    type: 'upload';
+    filename: string;
+    contents: string;
+  }
+  interface DownloadEvent {
+    type: 'download';
+    filename: string;
+  }
+
+  type AppEvent = UploadEvent | DownloadEvent;
+
+  function handleEvent(e: AppEvent) {
+    switch (e.type) {
+      case 'upload':
+        e;
+        break;
+      case 'download':
+        e;
+        break;
+    }
+  }
+
+  // 식별을 돕기 위해 커스텀 함수 도입 가능
+  // 사용자 정의 타입 가드
+  function isInputElement(el: HTMLElement): el is HTMLInputElement {
+    return 'value' in el;
+  }
+
+  function getElementContent(el: HTMLElement) {
+    if (isInputElement(el)) {
+      el;
+      return el.value;
+    }
+    el;
+    return el.textContent;
+  }
+
+  function isDefined<T>(x: T | undefined): x is T {
+    return x !== undefined;
+  }
+
+  // Item 2️⃣3️⃣. 한꺼번에 객체 생성하기
+  // 객체를 생성할 때는 속성을 하나씩 추가하기보다는 여러 속성을 포함해서 한꺼번에 생성해야 타입 추론에 유리하다.
 }
