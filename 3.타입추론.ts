@@ -167,4 +167,39 @@
 
   // Item 2️⃣3️⃣. 한꺼번에 객체 생성하기
   // 객체를 생성할 때는 속성을 하나씩 추가하기보다는 여러 속성을 포함해서 한꺼번에 생성해야 타입 추론에 유리하다.
+
+  // Item 2️⃣4️⃣. 일관성 있는 별칭 사용하기
+
+  // Item 2️⃣5️⃣. 비동기 코드에는 콜백 대신 async 함수 사용하기
+
+  // Item 2️⃣6️⃣. 타입 추론에 문맥이 어떻게 사용되는지 이해하기
+
+  // function setLanguate(language: string) {}
+
+  // 인라인 형태
+  setLanguate('JavaScript');
+
+  // 참조 형태
+  let language = 'JavaScript';
+  setLanguate(language);
+
+  // 문자열 타입을 -- 특정 --> 문자열 리터럴 타입의 유니온
+
+  type Language = 'JavaScript' | 'TypeScript' | 'Python';
+
+  function setLanguate(language: Language) {}
+
+  setLanguate('JavaScript'); // 정상
+
+  setLanguate(language); // 에러
+
+  // 해법 1. 타입 선언에서 language의 가능한 값을 제한
+
+  let language1: Language = 'JavaScript';
+
+  setLanguate(language1);
+
+  // 해법 2. language를 상수로 만들기
+  const language2 = 'JavaScript';
+  setLanguate(language2);
 }
